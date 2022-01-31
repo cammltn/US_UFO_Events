@@ -1,0 +1,171 @@
+<!--Camille Milton
+GEOG 677
+Final Project-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <!-- Materialize CSS  -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <!--CSS Stylesheet-->
+        <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <!--<link rel="stylesheet" href="content.css">-->
+
+        <!--Materialize Scripts-->
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="js/materialize.js"></script>
+        <script src="js/init.js"></script>
+
+        <!--Reference file for ArcGIS CSS-->
+        <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css">
+        <!--ArcGIS JavaScript API-->
+        <script src="https://js.arcgis.com/4.18/"></script>
+            
+        <!--Title for this webpage-->
+        <title>UFO Sightings Map</title>
+    </head>
+
+    <body>
+        <!--Navigation Menu-->
+        <nav class="white" role="navigation">
+            <div class="nav-wrapper container">
+                <a id="logo-container" href="#" class="brand-logo">Tracing UFO Sightings</a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="Home.html">Home</a></li>
+                    <li><a href="map.html">Map</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                </ul>
+
+                <ul id="nav-mobile" class="sidenav">
+                    <li><a href="#">Navbar Link</a></li>
+                </ul>
+                <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            </div>
+        </nav>
+
+
+          <div id="index-banner" class="parallax-container">
+                <div class="section no-pad-bot">
+                <div class="container">
+                    <br><br>
+                    <h1 class="header center teal-text ">Map of UFO Sightings in the U.S.</h1>
+                    <div class="row center">
+                    <h5 class="header col s12 ">Click any point to see information about the event.</h5>
+                    </div>
+                    <br><br>
+            
+                </div>
+                </div>
+                <div class="parallax"><img src="bkimages/time.jpg" alt="Unsplashed background img 1"></div>
+          </div>
+
+        <!--DIV that will store the map-->
+        <div id="map"></div>
+        <!--Script for the map-->
+        <script>
+            require([
+                "esri/Map",
+                "esri/views/MapView",
+                "esri/layers/FeatureLayer",
+                "esri/widgets/TimeSlider"
+                ], 
+                function(Map, MapView, FeatureLayer, TimeSlider) {    
+                    var map = new Map({
+                        basemap: "topo-vector"
+                    });
+                    var view = new MapView({
+                            container: "map",
+                            map: map,
+                            center: [-95, 37], 
+                            zoom: 4
+                    });
+            
+                //Popups for UFO points
+                var popupSighting = {
+                    title: "Reported UFO Sighting",
+                    content:
+                    "<b>Date: </b> {Date___Time}<br><b>City: </b> {City} {State}<br><b>Duration: </b> {Duration}<br><b>Summary: </b> {Summary}"
+                };
+
+                //Popups for Military points
+                var popupMilitary = {
+                    title: "Military Base",
+                    content:
+                    "<b>Military Component: </b> {MIRTA_Poin}"
+
+                };
+
+                //UFO Sighting Data from ArcGIS Server REST URL
+                var UFOLayer = new FeatureLayer({
+                    url:
+                    "https://geogws004.umd.edu/arcgis/rest/services/GEOG677_W2021/UFOEvents/MapServer",
+                    outFields: ["*"], //Return all fields
+                    popupTemplate: popupSighting
+                });
+
+                //Military Base Data from ArcGIS Server REST URL
+                var militaryLayer = new FeatureLayer({
+                    url:
+                    "https://geogws004.umd.edu/arcgis/rest/services/GEOG677_W2021/US_Military/MapServer",
+                    outFields: ["*"], //Return all fields
+                    popupTemplate: popupMilitary
+
+                });
+
+                //Airports Data from ArcGIS Server REST URL
+                var airportLayer = new FeatureLayer({
+                    url:
+                    "https://geogws004.umd.edu/arcgis/rest/services/GEOG677_W2021/US_Airports/MapServer",
+                    visible: false
+
+                });
+
+                //Initialize TimeSlider widget
+                const timeSlider = new TimeSlider({
+                    container: "timeSlider",
+                    view: view,
+                    timeVisible: true,
+                    loop: true
+                });
+
+                map.add(UFOLayer);
+                map.add(militaryLayer);
+
+            });
+
+            
+            
+        </script>
+
+        <!--Footer-->
+        <footer class="page-footer teal">
+            <div class="container">
+                <div class="row">
+
+                    <!--Project Purpose-->
+                    <div class="col l6 s12">
+                    <h5 class="white-text">Camille Milton</h5>
+                    <p class="grey-text text-lighten-4">This project was created for my final project submission for GEOG677 as part of The University of Maryland, College Park's Geospatial Information 
+                        Sciences Masters Program.</p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <!--Attribute Materialize Library-->
+                <div class="container">
+                    Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+                </div>
+            </div>
+        </footer>
+
+
+    </body>
+</html>
+
+
